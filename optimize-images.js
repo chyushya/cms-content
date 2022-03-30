@@ -6,11 +6,11 @@ var sharp = require('sharp');
   const imageFolder = path.join(__dirname, './content/resources/images')
   if (!fs.existsSync(imageFolder)) return //TODO: remove all images
   const blurFolder = path.join(__dirname, './content/resources/blur')
-  const webp280Folder = path.join(__dirname, './content/resources/webp-280')
+  const webp1024Folder = path.join(__dirname, './content/resources/webp-1024')
   const webp1920Folder = path.join(__dirname, './content/resources/webp-1920')
   const resultFolders = [
     { folder: blurFolder, extension: 'jpg' },
-    { folder: webp280Folder, extension: 'webp' },
+    { folder: webp1024Folder, extension: 'webp' },
     { folder: webp1920Folder, extension: 'webp' },
   ]
   const deletePromises = resultFolders.map(({ folder: resultFolder, extension }) => (async () => {
@@ -37,7 +37,7 @@ var sharp = require('sharp');
     try {
       const [, timestamp, outputFilename] = filename.match(/(\d+)-\d+-\d+-(.+)/)
       const blurFilePath = path.join(blurFolder, `${timestamp}-${outputFilename}`) + '.jpg'
-      const webp280FilePath = path.join(webp280Folder, `${timestamp}-${outputFilename}`) + '.webp'
+      const webp1024FilePath = path.join(webp1024Folder, `${timestamp}-${outputFilename}`) + '.webp'
       const webp1920FilePath = path.join(webp1920Folder, `${timestamp}-${outputFilename}`) + '.webp'
       const instance = sharp(path.join(imageFolder, filename), { animated: true })
       const metadata = await instance.metadata()
@@ -55,12 +55,12 @@ var sharp = require('sharp');
             if (err) console.error(err)
           });
       }
-      if (!fs.existsSync(webp280FilePath)) {
-        console.log('create ' + webp280FilePath)
+      if (!fs.existsSync(webp1024FilePath)) {
+        console.log('create ' + webp1024FilePath)
         instance.clone()
           .webp({ effort: 6 })
-          .resize({ width: (metadata.width > 280)? 280 : metadata.width })
-          .toFile(webp280FilePath, function (err) {
+          .resize({ width: (metadata.width > 1024)? 1024 : metadata.width })
+          .toFile(webp1024FilePath, function (err) {
             if (err) console.error(err)
           });
       }
