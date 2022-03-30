@@ -39,7 +39,7 @@ var sharp = require('sharp');
     try {
       const [, timestamp, outputFilename] = filename.match(/(\d+)-\d+-\d+-(.+)/)
       const blurFilePath = path.join(blurFolder, `${timestamp}-${outputFilename}`) + '.jpg'
-      const webpThumbnailFilePath = path.join(webp1024Folder, `${timestamp}-${outputFilename}`) + '.webp'
+      const webpThumbnailFilePath = path.join(webpThumbnailFolder, `${timestamp}-${outputFilename}`) + '.webp'
       const webp1024FilePath = path.join(webp1024Folder, `${timestamp}-${outputFilename}`) + '.webp'
       const webp1920FilePath = path.join(webp1920Folder, `${timestamp}-${outputFilename}`) + '.webp'
       const instance = sharp(path.join(imageFolder, filename), { animated: true })
@@ -61,13 +61,25 @@ var sharp = require('sharp');
       if (!fs.existsSync(webpThumbnailFilePath)) {
         console.log('create ' + webpThumbnailFilePath)
         instance.clone()
-          .webp({ effort: 6 })
+          .webp({
+            effort: 6,
+            quality: 30
+          })
           .resize({
             width: 280,
             height: 280,
             fit: sharp.fit.cover,
           })
           .toFile(webpThumbnailFilePath, function (err) {
+            if (err) console.error(err)
+          });
+      }
+      if (!fs.existsSync(webp1024FilePath)) {
+        console.log('create ' + webp1024FilePath)
+        instance.clone()
+          .webp({ effort: 6 })
+          .resize({ width: (metadata.width > 1024) ? 1024 : metadata.width })
+          .toFile(webp1024FilePath, function (err) {
             if (err) console.error(err)
           });
       }
